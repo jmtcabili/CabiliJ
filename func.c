@@ -15,7 +15,7 @@ void manageData()
 {
     char password[] = "poginijohan", input[500];
     int i; 
-
+    //use getchar()
     printf("Enter admin password: ");
 
 
