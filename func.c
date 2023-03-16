@@ -1,6 +1,7 @@
-#include <stdio.h>
+
 
 typedef char String30[31];
+typedef char String500[501];
 
 void mainMenu()
 {
@@ -13,10 +14,46 @@ void mainMenu()
 
 void manageData()
 {
-    char password[] = "poginijohan", input[500];
-    int i; 
-    //use getchar()
+    char password[30] = "poginijohan";
+    String500 input; 
+
+    int i = 0; 
+    int ch; 
+
     printf("Enter admin password: ");
+
+    while (strcmp(input, password) != 0)
+    {
+        while((ch = getch()) != 13)
+        {
+            if(ch != '\b')
+            {
+                input[i] = ch; 
+                i++;
+                input[i] = '\0';
+                printf("*");
+            } else
+            {
+                printf("\b \b");                
+                i--;
+                input[i] = '\0';
+            }
+            
+        }
+        printf("you entered: %s\n", input);
+        if (strcmp(input, password) != 0)
+        {
+            printf("\nPlease try again: \n");
+            strcpy(input, "");
+            i = 0; 
+        }
+    
+    }
+
+    printf("Welcome to the page!\n");
+
+    fflush(stdin);
+
 
 
 }

@@ -1,6 +1,9 @@
-
+#include <stdio.h>
+#include <string.h>
 #include <stdio.h>
 #include <windows.h>
+#include <conio.h>
+
 #include "func.c"
 
 
@@ -9,7 +12,7 @@ main()
 {
     char choice; 
 
-    while (choice != 'e' || choice != 'E')
+    while (!(choice == 'e' || choice == 'E'))
     {
         mainMenu();
         scanf("%c", &choice);
