@@ -1,7 +1,14 @@
 
 
-typedef char String30[31];
-typedef char String500[501];
+typedef char string30[31];
+typedef char string500[501];
+typedef char string150[151];
+
+struct question{
+    int num; 
+    string150 question; 
+    string30 c1, c2, c3, answer;
+};
 
 void mainMenu()
 {
@@ -15,7 +22,7 @@ void mainMenu()
 void manageData()
 {
     char password[30] = "poginijohan";
-    String500 input; 
+    string500 input; 
 
     int i = 0; 
     int ch; 
@@ -40,7 +47,6 @@ void manageData()
             }
             
         }
-        printf("you entered: %s\n", input);
         if (strcmp(input, password) != 0)
         {
             printf("\nPlease try again: \n");
