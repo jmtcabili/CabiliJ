@@ -1,8 +1,7 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdio.h>
-#include <windows.h>
-#include <conio.h>
+#include <stdio.h> //standard input-output library
+#include <string.h> //for string functions
+#include <windows.h> //for system commands
+#include <conio.h> //for getch()
 
 #include "func.c"
 
@@ -10,24 +9,30 @@
 int
 main()
 {
-    char choice; 
+    char mode = 'b'; //start the game mode at the main menu
 
-    while (!(choice == 'e' || choice == 'E'))
+
+    do //make main menu a mode, include it in one of the cases
     {
-        mainMenu();
-        scanf("%c", &choice);
-
-        switch (choice)
+        switch (mode)
         {
+            case 'b': 
+            case 'B':
+                system("cls");
+                mainMenu(&mode);
+                break;
             case 'm':
             case 'M':
-                manageData();
+                if (getPassword(&mode) == 2)
+                    manageData(&mode);
                 break;
-            
             default:
                 break;
         }
-    }
+
+    } while (!(mode == 'e' || mode == 'E'));
+    
+    //exit 
 
     system("cls");
     printf("Thank you for playing!");   
