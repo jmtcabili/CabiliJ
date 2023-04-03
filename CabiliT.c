@@ -10,7 +10,8 @@ int
 main()
 {
     char mode = 'b'; //start the game mode at the main menu
-
+    int nQuestions = 0;
+    struct question list[20]; //struct array for 20 questions
 
     do //make main menu a mode, include it in one of the cases
     {
@@ -24,7 +25,7 @@ main()
             case 'm':
             case 'M':
                 if (getPassword(&mode) == 2)
-                    manageData(&mode);
+                    manageData(&mode, list, &nQuestions);
                 break;
             default:
                 break;
