@@ -27,7 +27,14 @@ main()
                 if (getPassword(&mode) == 2)
                     manageData(&mode, list, &nQuestions);
                 break;
+            case 'p':
+            case 'P':
+                //for play
+                break;
             default:
+                printf("Invalid input...");
+                Sleep(2000);
+                mode = 'b';
                 break;
         }
 
