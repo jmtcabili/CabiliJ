@@ -37,6 +37,30 @@ getQuestion(string150 question)
     }while (ch != '\n' && i < quessSize-1);
 }
 
+void 
+updateNum(struct question list[], int *nQuestions, string20 topic)
+{
+    int num = 0; 
+    for (int i = 0; i < *nQuestions; i++)
+    {
+        if (!strcmp(list[i].topic, topic))
+        {
+            num++;
+            list[i].num = num; 
+        }
+    }
+}
+
+void dots()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        Sleep(250);
+        printf(".");
+    }
+    printf("\n");
+}
+
 
 
 int getPassword(char* mode)
@@ -169,7 +193,7 @@ addRecord(struct question list[], int * nQuestions)
     fflush(stdin);
     char buffer = '\0';
     string150 questionInput; 
-    string30 answerInput, choice; 
+    string30 answerInput; 
     string20 topic; 
     int found = 0, topicQ = 0, index; 
 
@@ -193,7 +217,11 @@ addRecord(struct question list[], int * nQuestions)
         strcpy(list[*nQuestions].answer, answerInput);
 
         //getting inputs
-        printf("No similar records found...\n\n");
+        Sleep(500);
+        printf("Scanning database"); dots();
+        Sleep(1000);
+        printf("No similar records found!\n\n");
+        
         printf("Input remaining details for:\nQuestion: %s\n", questionInput);
         printf("Answer: %s\n\n", answerInput);
 
@@ -203,35 +231,25 @@ addRecord(struct question list[], int * nQuestions)
         strcpy(list[*nQuestions].topic, topic);
 
         //gets chocie and stores to struct array
-        printf("\n3 choices: (only one word per choice): \n");
-        for (int i = 1; i <= 3; i++)
-        {
-            printf("Choice %d: ", i);
-            scanf("%s", choice);
-            switch (i)
-            {
-                case 1: 
-                    strcpy(list[*nQuestions].c1, choice);
-                    break;
-                case 2: 
-                    strcpy(list[*nQuestions].c2, choice);
-                    break;
-                case 3: 
-                    strcpy(list[*nQuestions].c3, choice);
-                    break;
-                default:
-                    break;
-            }
-            strcpy(choice, "");
-        }
+        printf("3 choices: (only one word per choice): \n");
+        printf("Choice 1: ");
+        scanf("%s", list[*nQuestions].c1);
+        printf("Choice 2: ");
+        scanf("%s", list[*nQuestions].c2);
+        printf("Choice 3: ");
+        scanf("%s", list[*nQuestions].c3);
 
         *nQuestions+=1;
-        //sort through struct array and count num questions for a certain topic 
+        //sort through struct array and count num questions with similar topic
+        ///to the one that was just added 
         for (int i = 0; i < *nQuestions; i++)
             if (strcmp(list[i].topic, topic) == 0)
                 topicQ++;
     
         list[*nQuestions-1].num = topicQ;
+
+        printf("\nRecord successfully added!\n"); 
+        printf("Returning to manage data menu"); dots();
 
     }else 
     {
@@ -256,14 +274,22 @@ addRecord(struct question list[], int * nQuestions)
 void
 editPrompt(struct question list[], int * nQuestions, char * mode)
 {
+    /*
+        In manageData(), editPrompt will continue to run until you change 
+        the choice used to switch modes in manageData()
+    */
+
     string20 currentTopic; //to find unique topics and identify topic being editted
     string20 uniqueTopics[*nQuestions]; //list of unique topics
+    string20 newTopic, previousTopic; //when editting a topic
 
 
     int uniqueIndexes[*nQuestions]; //occurences of topics in list[k].topics
-    int count, k, num;  //topic count, while iterator, list count
+    int count, k, num, index;  //topic count, while iterator, list count, question index in list[]
+    int found = 0;
+    int lowest = 1, highest = 1; 
     char editChoice; 
-    int topicChoice; 
+    int topicChoice, questionChoice, fieldChoice; 
     int willEdit = 0; 
 
     for (int i = 0; i < *nQuestions; i++)
@@ -279,30 +305,32 @@ editPrompt(struct question list[], int * nQuestions, char * mode)
             }
         }   
     }        
+    Sleep(1000);
+    system("cls");
+    printf("\n-----List of unique topics-----\n");
+    num = 0;//num unique topics
 
-    printf("-----List of unique topics-----\n");
-    k = 0; //while-loop iterator
-    num = 0;//num questions
-
-    while (k < *nQuestions)
+    for (k = 0; k < *nQuestions; k++)
     {
         if (uniqueIndexes[k] == 1)
+        
         {
+            strcpy(uniqueTopics[num], list[k].topic);
             num++;
             printf("%d.) %s\n", num, list[k].topic);
-            strcpy(uniqueTopics[num-1], list[k].topic);
+
         }
-        k++;
     }
-    printf("--------------------------------\n");
+
+    printf("-------------------------------\n\n");
     
     //admin decides whether or not to continue editting or go back to manage data
 
     do
     {
         printf("Would you like to edit any of the topic entries?\n");
+        printf("- [Y]es\n- [N]o, go back to admin menu\nOption: ");
         scanf(" %c", &editChoice);
-
         if (editChoice == 'y' || editChoice == 'Y')
             willEdit = 1;
         else if (editChoice == 'n' || editChoice == 'N')
@@ -321,40 +349,128 @@ editPrompt(struct question list[], int * nQuestions, char * mode)
     {
         do
         {
-            printf("From which topic would you like to edit?\n");
+            printf("\nFrom which topic would you like to edit?\n");
             printf("Enter the number beside the topic as indicated in the list above: ");
             scanf("%d", &topicChoice);
-            if (topicChoice >= 1 && topicChoice <= *nQuestions)
+            if (topicChoice >= 1 && topicChoice <= num)
                 printf("\nPrinting questions under the topic: %s\n\n", uniqueTopics[topicChoice-1]);
             else
                 printf("Invalid input. Please try again\n\n");
 
         } while (topicChoice < 1 || topicChoice > num);
 
-        //show questions in topic and choose
+        //show questions in topic
+        printf("------------------------------------\n");
         for (int i = 0; i < *nQuestions; i++)
         {
             if (strcmp(list[i].topic, uniqueTopics[topicChoice-1]) == 0)
             {
+                
                 printf("%d.) %s\n", list[i].num, list[i].question);
                 printf("Answer: %s\n", list[i].answer);
                 printf("Choices:\n");
                 printf("- %s\n", list[i].c1);
                 printf("- %s\n", list[i].c2);
-                printf("- %s\n\n", list[i].c3);
+                printf("- %s\n", list[i].c3);
+                printf("------------------------------------\n");
+                if (list[i].num > highest)
+                    highest = list[i].num; //finding highest question#
             }
         }
+        //ask for question number to be editted
+        do
+        {
+            //maybe add cancel option -- too hassle if nagkamali pala sa option
+            printf("Which question number would you like to edit?\nQuestion #: ");
+            scanf("%d", &questionChoice);
+            if (questionChoice < lowest || questionChoice > highest)
+                printf("Invalid input. Please try again.\n\n");
+        } while (questionChoice < lowest || questionChoice > highest);
         
+        //show chosen record and ask which field to edit
+        k = 0; //reuse
+        printf("\nChosen record to edit:\n\n");
+        while (k < *nQuestions && !found) 
+        {
+            if (list[k].num == questionChoice &&
+                !strcmp(list[k].topic, uniqueTopics[topicChoice-1]))
+            {
+                printf("Topic: %s\n", list[k].topic);
+                printf("Question #%d: %s\n", list[k].num, list[k].question);
+                printf("Answer: %s\n", list[k].answer);
+                printf("Choices:\n");
+                printf("- %s\n", list[k].c1);
+                printf("- %s\n", list[k].c2);
+                printf("- %s\n", list[k].c3);
+                found = 1; 
+                index = k; 
+            }
+            k++;
+        }
+        Sleep(500);
+        //if changing topic, make sure to update question number#
+        do
+        { 
+            printf("\n+++++++++++++++++++++++++++++++++++++++++++\n");
+            printf("Which field would you like to edit?\n");
+            printf("1.) Topic\n2.) Question\n3.) Choice 1\n4.) Choice 2\n");
+            printf("5.) Choice 3\n6.) Answer\n");
+            
+             
+            printf("Option: ");
+            scanf("%d", &fieldChoice);
+            switch (fieldChoice)
+            {
+                case 1:
+                    printf("New topic: ");
+                    scanf("%s", newTopic);
+                    strcpy(previousTopic, list[index].topic);
+                    strcpy(list[index].topic, newTopic);
+                    for (int i = 0; i < *nQuestions; i++)
+                    {
+                        //update question numbers of previous topic
+                        //list[index].topic -> topic chosen to edit/change
+                        //list[i].topic -> occurence of topic in list[]
+                        updateNum(list, nQuestions, previousTopic);
+                        updateNum(list, nQuestions, newTopic);
+                        //update question numbers of new topic
+                    }
+                    fieldChoice = 5;
+                    break;
+                case 2:
+                    printf("New Question: ");
+                    fflush(stdin);
+                    getQuestion(list[index].question);
+                    fieldChoice = 5;
+                    break;
+                case 3:
+                    //ask which choice hehe
+                    printf("Choice 1: "); scanf("%s", list[index].c1);
+                    fieldChoice = 5;
+                    break;
+                case 4:
+                    printf("Choice 2: "); scanf("%s", list[index].c2);
+                    fieldChoice = 5;
+                    break;
+                case 5: 
+                    printf("Choice 3: "); scanf("%s", list[index].c3);
+                    fieldChoice = 5;
+                    break;
+                case 6:
+                    printf("New answer: "); scanf("%s", list[index].answer);
+                    fieldChoice = 5;
+                    break;
+                default:
+                    fflush(stdin);
+                    printf("Invalid input. Please try again\n\n");
+                    break;
+            }
+        } while (fieldChoice != 5);
         
-        //show chosen record and ask which field to edit 
-
-        //go back to displaying all topics
+        printf("enter any key to proceed...\n");
+        scanf(" %c", &editChoice);
     }
- 
-        
-    
-    
-    
-
 }
+
+
 
