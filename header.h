@@ -14,10 +14,10 @@ struct question{
     int num; 
     string150 question; 
     string30 c1, c2, c3, answer;
+    int answered; 
 };
 
-struct player{
-    int num; 
+struct player{ 
     string30 name;
     int score; 
 };

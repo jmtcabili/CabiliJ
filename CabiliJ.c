@@ -10,8 +10,9 @@ int
 main()
 {
     char mode = 'b'; //start the game mode at the main menu
-    int nQuestions = 0;
-    struct question list[listSize]; //struct array for 50 questions
+    int nQuestions = 0, nPlayers = 0;
+    struct question list[listSize]; //struct array for 50 questions 
+    struct player profileList[listSize]; //struct array for 50 players
 
     do //make main menu a mode, include it in one of the cases
     {
@@ -30,7 +31,11 @@ main()
                 break;
             case 'p':
             case 'P':
+                play(list, profileList, &nQuestions, &nPlayers);
                 //for play
+                //shuffle choices
+                //sort scores
+                //add element in structs to determine if question is already answered
                 break;
             default:
                 printf("Invalid input. Please Try again.\n");
@@ -47,6 +52,22 @@ main()
     printf("Thank you for playing!");   
     
     
-
+    /*
+    To-do
+        1. Fix edit and import
+            - edit (account for same q and a)
+                - if changing q/a, loop through list to verify if valid q and a
+            - import (account for same q and a)
+                - do not import if there is similar record
+                - give warning message "some messages not imported"
+        2. Export (done) 
+        3. Quiz Game
+            a. Play game - add other element to struct if answered
+                - when displaying questions, check if already answered
+            b. View Scores - sort scores
+            c. Exit
+    
+    */
+    
     return 0; 
 }
