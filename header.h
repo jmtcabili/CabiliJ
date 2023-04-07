@@ -1,11 +1,12 @@
+#define listSize 50
 #define topicSize 21
 #define choiceSize 31
-#define passSize 501
+#define longString 501
 #define quessSize 151
 
 typedef char string30[choiceSize]; 
 typedef char string20[topicSize];
-typedef char string500[passSize]; 
+typedef char string500[longString]; 
 typedef char string150[quessSize]; 
 
 struct question{

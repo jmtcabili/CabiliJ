@@ -11,10 +11,11 @@ main()
 {
     char mode = 'b'; //start the game mode at the main menu
     int nQuestions = 0;
-    struct question list[20]; //struct array for 20 questions
+    struct question list[listSize]; //struct array for 50 questions
 
     do //make main menu a mode, include it in one of the cases
     {
+        fflush(stdin);
         switch (mode)
         {
             case 'b': 
@@ -32,8 +33,8 @@ main()
                 //for play
                 break;
             default:
-                printf("Invalid input...");
-                Sleep(2000);
+                printf("Invalid input. Please Try again.\n");
+                Sleep(1000);
                 mode = 'b';
                 break;
         }
