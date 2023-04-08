@@ -5,16 +5,20 @@ void editRecord(struct question[], int*, int*);
 void deleteRecord(struct question[], int*, int*);
 void importData(struct question[], int*, int*);
 void exportData(struct question[], int*);
-
+void play(struct question[], struct player[], int*, int*, char*);
+int searchPlayer(struct player[], int*, string20);
+void printScoreboard(struct player[], int*, string20);
+void sortByScore(struct player[], int*);
+void viewScores(struct player[], int*);
 
 void 
 mainMenu(char* mode)
 {
     printf("\n%14s%s\n\n", " ", "--QuizGeym--");
     printf("%8s%s\n", " ", "Welcome to the main menu!");
-    printf("%4s%s", " ", "Choose among the following modes:\n\n");
+    printf("%4s%s", " ", "Choose among the following actions:\n\n");
     printf("-[M]anage Data (Admin)\n-[P]lay the game (Player)\n");
-    printf("-[E]xit the game\n\n I select: ");
+    printf("-[R]eset questions\n-[E]xit the game\n\n I select: ");
     scanf("%c", mode);
 }
 
@@ -154,7 +158,7 @@ int getPassword(char* mode)
                         fflush(stdin);
                         break;
                     default:
-                        printf("Wrong input. Please try again.\n");
+                        printf("Invalid input. Please try again.\n");
                         break;
                 }
             } while (!(choice == 't' || choice == 'T' ||
@@ -194,6 +198,7 @@ void manageData(char * mode, struct question list[], int * nQuestions)
                     addRecord(list, nQuestions);
                     break;
                 case 2:
+                    system("cls");
                     printf("Edit a record:\n");
                     do
                     {
@@ -352,6 +357,7 @@ editRecord(struct question list[], int * nQuestions, int * mode)
     }
     else
     {
+        system("cls");
         for (int i = 0; i < *nQuestions; i++)
         {
             count = 0;
@@ -366,8 +372,7 @@ editRecord(struct question list[], int * nQuestions, int * mode)
             }   
         }        
         Sleep(1000);
-        system("cls");
-        printf("\n-----List of unique topics-----\n");
+        printf("\n-----List of topics-----\n");
         num = 0;//num unique topics
 
         for (k = 0; k < *nQuestions; k++)
@@ -382,7 +387,7 @@ editRecord(struct question list[], int * nQuestions, int * mode)
             }
         }
 
-        printf("-------------------------------\n\n");
+        printf("------------------------\n\n");
         
         //admin decides whether or not to continue editting or go back to manage data
 
@@ -548,6 +553,8 @@ deleteRecord(struct question list[], int * nQuestions, int * mode)
     int uniqueIndexes[*nQuestions];
     int lowest = 1, highest = 1; 
     int k, found = 0, index; 
+
+    char choice; 
     string20 currentTopic, uniqueTopics[*nQuestions];
 
     char deleteChoice; 
@@ -577,8 +584,7 @@ deleteRecord(struct question list[], int * nQuestions, int * mode)
             }   
         }        
         Sleep(1000);
-        system("cls");
-        printf("\n-----List of unique topics-----\n");
+        printf("\n-----List of topics-----\n");
         num = 0;//num unique topics
 
         for (int k = 0; k < *nQuestions; k++)
@@ -651,7 +657,7 @@ deleteRecord(struct question list[], int * nQuestions, int * mode)
             do
             {
                 //maybe add cancel option -- too hassle if nagkamali pala sa option
-                printf("Which question number would you like to edit [%d] - [%d]?\n", lowest, highest);
+                printf("Which question number would you like to delete [%d] - [%d]?\n", lowest, highest);
                 printf("Enter [0] to cancel\n");
                 printf("Question #: ");
                 scanf("%d", &questionChoice);
@@ -663,53 +669,85 @@ deleteRecord(struct question list[], int * nQuestions, int * mode)
             } while ((questionChoice < lowest && questionChoice != 0) || questionChoice > highest);
             
             //show chosen record and ask which field to edit
-            k = 0; //reuse
-            printf("\nChosen record to delete:\n\n");
-            while (k < *nQuestions && !found) 
+            if (willDelete)
             {
-                if (list[k].num == questionChoice &&
-                    !strcmp(list[k].topic, uniqueTopics[topicChoice-1]))
+                k = 0; //reuse
+                printf("\nChosen record to delete:\n\n");
+                while (k < *nQuestions && !found) 
                 {
-                    printf("Topic: %s\n", list[k].topic);
-                    printf("Question #%d: %s\n", list[k].num, list[k].question);
-                    printf("Answer: %s\n", list[k].answer);
-                    printf("Choices:\n");
-                    printf("- %s\n", list[k].c1);
-                    printf("- %s\n", list[k].c2);
-                    printf("- %s\n", list[k].c3);
-                    found = 1; 
-                    index = k; 
-                }
-                k++;
-            }
-            Sleep(500);
-
-            //deleting
-            strcpy(list[index].topic, "");
-            strcpy(list[index].question, "");
-            strcpy(list[index].answer, "");
-            strcpy(list[index].c1, "");
-            strcpy(list[index].c2, "");
-            strcpy(list[index].c3, "");
-            list[index].num = 0;
-
-            for (int i = 0; i < *nQuestions-1; i++)
-            {
-                if (!strcmp(list[index].topic, list[i].topic) && 
-                    list[index].num == list[i].num)
-                {
-                    for (int j = i; j < *nQuestions-1; j++)
+                    if (list[k].num == questionChoice &&
+                        !strcmp(list[k].topic, uniqueTopics[topicChoice-1]))
                     {
-                        list[j] = list[j+1];
+                        printf("Topic: %s\n", list[k].topic);
+                        printf("Question #%d: %s\n", list[k].num, list[k].question);
+                        printf("Answer: %s\n", list[k].answer);
+                        printf("Choices:\n");
+                        printf("- %s\n", list[k].c1);
+                        printf("- %s\n", list[k].c2);
+                        printf("- %s\n", list[k].c3);
+                        found = 1; 
+                        index = k; 
                     }
+                    k++;
+                }
+                Sleep(500);
+
+                //deleting
+                do
+                {
+                    printf("Are you sure you want to delete this record (Y/N)?\n");
+                    printf("Option: ");
+                    scanf(" %c", &choice);
+                    if (choice == 'y' || choice == 'Y')
+                    {
+                        printf("Deleting");
+                        dots();
+                        choice = 'p';
+                    }
+                    else if (choice == 'n' || choice == 'N')
+                    {
+                        printf("Cancelling");
+                        dots();
+                        willDelete = 0; 
+                        choice = 'p';
+                    }
+                    else
+                        printf("Invalid input. Please try again.\n");
+
+                } while (choice != 'p');
+                
+                if (willDelete)
+                {
+                    strcpy(list[index].topic, "");
+                    strcpy(list[index].question, "");
+                    strcpy(list[index].answer, "");
+                    strcpy(list[index].c1, "");
+                    strcpy(list[index].c2, "");
+                    strcpy(list[index].c3, "");
+                    list[index].num = 0;
+
+                    for (int i = 0; i < *nQuestions-1; i++)
+                    {
+                    if (!strcmp(list[index].topic, list[i].topic) && 
+                        list[index].num == list[i].num)
+                    {
+                        for (int j = i; j < *nQuestions-1; j++)
+                        {
+                            list[j] = list[j+1];
+                        }
+                    }
+                    }
+                    *nQuestions = *nQuestions - 1;
+                    updateNum(list, nQuestions, list[index].topic);
+                    fflush(stdin);
                 }
             }
-            *nQuestions = *nQuestions - 1;
-            updateNum(list, nQuestions, list[index].topic);
-            //call updateNum() function 
-            fflush(stdin);
+            
+            
+            
         }
     }
+    system("cls");
 }
 
 void importData(struct question list[], int *nQuestions, int *mode)
@@ -828,7 +866,333 @@ exportData(struct question list[], int * nQuestions)
 }
 
 void 
-play()
-{
+game(struct question list[], struct player profileList[],
+     int *nQuestions, int *nPlayers, char * mode)
+{  
     
+    system("cls");
+
+    int control = 0; 
+    char playMode; 
+    printf("%8s%s\n", " ", "Welcome to the play menu!");
+    printf("%4s%s", " ", "Choose among the following actions:\n\n");
+    printf("-[P]lay\n-[V]iew scores\n-[E]xit\n\n");
+    printf("DESCRIPTIONS:\n");
+    printf("    Play    - Participate in a quiz game where each player receives a\n");
+    printf("              random question from a chosen topic. Once a question is\n");
+    printf("              is answered, no other player can answer the same question.\n\n");
+    printf("View scores - The ranking and the scoreboard are displayed on the\n");
+    printf("              on the console and are exported to a file of your choice.\n\n");
+    printf("    Exit    - Back to the starting menu. Player and question records\n");
+    printf("              will be cleared. \n\n");
+    printf("I select: ");
+    scanf("%c", &playMode);
+
+    while (!control)
+    {   
+        switch (playMode)
+        {
+            case 'p':
+            case 'P':
+                play(list, profileList, nQuestions, nPlayers, mode);
+                control = 1; 
+                break;
+            case 'v':
+            case 'V':
+                viewScores(profileList, nPlayers);
+                control = 1; 
+                break;
+            case 'e':
+            case 'E':
+                control = 1;
+                *mode = 'b';
+            default:
+                fflush(stdin);
+                printf("Invalid input. Please try again.\n\n");
+                break;
+        }
+        fflush(stdin);
+    }
+
+    
+}
+
+void 
+play(struct question list[], struct player profileList[],
+     int *nQuestions, int *nPlayers, char * mode)
+{
+    int num, count, k = 0, pos = 0;
+    int end = 0, highest = 1, number = 0, found = 0;
+    int foundPlayer, playerIndex; 
+
+    int uniqueIndexes[*nQuestions];
+    int topicChoice;
+    string20 currentTopic;
+    string20 uniqueTopics[*nQuestions];
+    string30 choices[3], answer, name;
+
+    if (*nPlayers)
+    {
+        printf("\nCurrent players: \n");
+        for (int i = 0; i < *nPlayers; i++)
+        {
+            printf("Player %d: %s\n", i+1, profileList[i].name);
+        }
+        printf("\nPlayer names can't be the same!\n");
+    }
+
+    printf("Enter player name (max 20 characters): ");
+    scanf("%s", name);
+
+    foundPlayer = searchPlayer(profileList, nPlayers, name);
+
+    if (foundPlayer >= 0)
+    {
+        playerIndex = foundPlayer;
+    } else
+    {
+        playerIndex = *nPlayers; 
+        strcpy(profileList[playerIndex].name, name);
+        profileList[playerIndex].score = 0; 
+        *nPlayers+=1; 
+    }
+    
+    //run while !end && there are questions not yet answered
+    //ask questions until player chooses to end turn 
+        // should be given option to end turn during topic select
+    while (!end)
+    {  
+        fflush(stdin);
+        system("cls");
+        sortByScore(profileList, nPlayers);
+        printScoreboard(profileList, nPlayers, name);
+        end = 0;
+        for (int i = 0; i < *nQuestions; i++)
+        {
+            count = 0;
+            strcpy(currentTopic, list[i].topic);
+            for (int j = 0; j < *nQuestions; j++)
+            {
+                if(strcmp(currentTopic, list[j].topic) == 0)
+                {
+                    count++;
+                    uniqueIndexes[j] = count;
+                }
+            }   
+        }        
+        Sleep(1000);
+        printf("\n-----List of topics-----\n");
+        num = 0;//num unique topics
+
+        for (int k = 0; k < *nQuestions; k++)
+        {
+            if (uniqueIndexes[k] == 1)
+            
+            {
+                strcpy(uniqueTopics[num], list[k].topic);
+                num++;
+                printf("%d.) %s\n", num, list[k].topic);
+
+            }
+        }
+        printf("-----------------------\n");
+
+        topicChoice = 0;
+        do
+        {
+            printf("\nFrom which topic would you like to answer?\n");
+            printf("Enter the number beside the topic as indicated in the list above.\n");
+            printf("Enter [0] to back to the menu\nOption: ");
+            scanf("%d", &topicChoice);
+            if (topicChoice >= 1 && topicChoice <= num)
+            {
+                printf("\nLoading a question from: %s\n", uniqueTopics[topicChoice-1]);
+                dots();
+                Sleep(500);
+                fflush(stdin);
+            }
+            else if (!topicChoice)
+            {
+                fflush(stdin);
+                end = 1;
+            }
+            else
+            {
+                fflush(stdin);
+                printf("Invalid input. Please try again\n\n");
+            }
+
+        } while ((topicChoice < 1 && topicChoice != 0) || topicChoice > num);
+        fflush(stdin);
+        //finding highest question#
+        highest = 0; 
+        if (!end)
+        {
+            for (int i = 0; i < *nQuestions; i++)
+            {
+                if (strcmp(list[i].topic, uniqueTopics[topicChoice-1]) == 0)
+                {
+                    if (list[i].num > highest)
+                        highest = list[i].num; 
+                }
+            }
+        
+                //printing random question
+                number = rand()%highest+1;
+
+
+                printf("-----------------------------\n");
+                printf("Question #%d: ", number);
+                
+                k = 0; found = 0; //re-initializing variables for next attempts
+                //search for question with given topic and number
+                while(k < *nQuestions && !found)
+                {
+                    if (!strcmp(list[k].topic,uniqueTopics[topicChoice-1]) &&
+                        list[k].num == number)
+                    {
+                        printf("%s\n", list[k].question);
+                        found = 1;
+                        k--;
+                    }
+                    k++;
+                }
+
+                strcpy(choices[0], list[k].c1);
+                strcpy(choices[1], list[k].c2);
+                strcpy(choices[2], list[k].c3);
+
+                int usedIndices[3] =  {-1, -1, -1};
+
+                printf("Choices:\n");
+                for (int i = 0; i < 3; i++)
+                {
+                    do
+                    {
+                        pos = rand()%3;
+                    } while (pos == usedIndices[0] || pos == usedIndices[1]);
+                    usedIndices[i] = pos;
+                    printf("- %s\n", choices[pos]);
+                }        
+
+                printf("Your answer(Type in the choice): ");
+                scanf("%s", answer);
+
+                //if correct
+                if (strcmp(answer, list[k].answer) == 0)
+                {
+                    printf("Correct!\n");
+                    Sleep(500);
+                    printf("Adding your score"); dots();
+                    playerIndex = searchPlayer(profileList, nPlayers, name); //because you sorted struct
+                    profileList[playerIndex].score += 1; 
+                    Sleep(500);
+                    list[k].answered = 1; 
+                }
+                else 
+                {
+                    printf("Incorrect. Try again!\n");
+                    Sleep(2000);
+                }
+            }
+        }    
+}
+
+void
+viewScores(struct player profileList[], int *nPlayers)
+{
+    //assume currentName in printScoreboard is leading scorer -> sorted array
+    int i;
+
+    FILE *fp, *fp2;
+    fp = fopen("score.txt", "w");
+
+    for(i = 0; i < *nPlayers; i++)
+    {
+        fprintf(fp, "%s\n", profileList[i].name);
+        fprintf(fp, "%d\n\n", profileList[i].score);
+    }
+
+    fp2 = fopen("hat.txt", "w");
+    fprintf(fp2, "%s", "23");
+
+
+    system("cls");
+    printf("Current scoreboard: \n");
+    printScoreboard(profileList, nPlayers, profileList[0].name);
+    printf("Exporting record"); dots();
+    printf("score.txt exported!\n\n");
+    printf("Heading back to main menu"); dots();
+    fclose(fp); fclose(fp2);
+
+}
+
+int 
+searchPlayer(struct player profileList[], int *nPlayers, string20 name)
+{
+    int i = 0, index = -1; 
+
+    while (i < *nPlayers && index == -1)
+    {
+        if (!strcmp(profileList[i].name, name))
+            index = i; 
+        i++;
+    }
+
+    return index;     
+}
+
+void
+printScoreboard(struct player profileList[], int *nPlayers, string20 currentName)
+{
+    int i; 
+
+    printf("*--------------------------------*\n");
+    for (i = 0; i < *nPlayers; i++)
+    {   
+        printf("|%-2d", i+1);
+        printf("|Player: ");
+        if (!strcmp(profileList[i].name, currentName))
+        {
+            printf("\033[0;32m");
+            printf("%-20s ", profileList[i].name);
+            printf("\033[0m|");
+        } else
+            printf("%-20s |", profileList[i].name);
+        if (i == 0 && *nPlayers > 1)
+            printf(" -> LEADING SCORER!");
+        printf("\n|  |Score: %-2d %19s|\n", profileList[i].score, "");
+        printf("*--------------------------------*\n");
+    }
+}
+
+void
+sortByScore(struct player profileList[], int *nPlayers)
+{
+    int i, j, max;
+    struct player temp; 
+    for (i = 0; i < *nPlayers-1; i++)
+    {
+        max = i; 
+        for (j = i+1; j < *nPlayers; j++)
+        {
+            if (profileList[j].score > profileList[max].score)
+                max = j;
+        }
+        if (max != i)
+        {
+            temp = profileList[max];
+            profileList[max] = profileList[i];
+            profileList[i] = temp; 
+        }
+    }
+    
+}
+
+void
+initializeQuestions(struct question list[], int *nQuestions)
+{
+    int i; 
+    for (i = 0; i < *nQuestions; i++)
+        list[i].answered = 0;
 }

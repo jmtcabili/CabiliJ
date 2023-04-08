@@ -18,6 +18,6 @@ struct question{
 };
 
 struct player{ 
-    string30 name;
+    string20 name;
     int score; 
 };

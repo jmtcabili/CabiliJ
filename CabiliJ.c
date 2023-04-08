@@ -1,6 +1,8 @@
 #include <stdio.h> //standard input-output library
 #include <string.h> //for string functions
 #include <windows.h> //for system commands
+#include <stdlib.h> //for rand and srand
+#include <time.h> //for time(NULL)
 #include <conio.h> //for getch()
 
 #include "func.c"
@@ -14,6 +16,9 @@ main()
     struct question list[listSize]; //struct array for 50 questions 
     struct player profileList[listSize]; //struct array for 50 players
 
+    FILE *fp; 
+
+    srand(time(NULL));
     do //make main menu a mode, include it in one of the cases
     {
         fflush(stdin);
@@ -31,11 +36,16 @@ main()
                 break;
             case 'p':
             case 'P':
-                play(list, profileList, &nQuestions, &nPlayers);
-                //for play
-                //shuffle choices
-                //sort scores
-                //add element in structs to determine if question is already answered
+                if(nQuestions)
+                {
+                    game(list, profileList, &nQuestions, &nPlayers, &mode);
+                }
+                else 
+                {
+                    printf("\nThere are no questions yet!");
+                    Sleep(2000);
+                    mode = 'b';
+                }
                 break;
             default:
                 printf("Invalid input. Please Try again.\n");
@@ -60,13 +70,8 @@ main()
             - import (account for same q and a)
                 - do not import if there is similar record
                 - give warning message "some messages not imported"
-        2. Export (done) 
-        3. Quiz Game
-            a. Play game - add other element to struct if answered
-                - when displaying questions, check if already answered
-            b. View Scores - sort scores
-            c. Exit
-    
+        2. Exit (game)
+            - clear player lists, also questions? ask others
     */
     
     return 0; 
