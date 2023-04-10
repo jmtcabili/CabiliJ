@@ -71,21 +71,5 @@ main()
     printf("Thank you for playing!");   
     
     
-    /*
-    To-do
-        1. Fix edit and import
-            - edit (account for same q and a)
-                - if changing q/a, loop through list to verify if valid q and a
-            - import (account for same q and a)
-                - do not import if there is similar record
-                - give warning message "some messages not imported"
-            - clear question list
-        2. Exit (game)
-            - clear player lists, also questions? ask others
-        3. Play 
-            - import question bank
-        4. Test cases
-    */
-    
     return 0; 
 }

@@ -15,7 +15,6 @@ void viewScores(struct player[], int*);
 void initializePlayerList(struct player[], int*);
 void inputFile(string30);
 void importQuestions(FILE*, struct question[], int*);
-void initializeAnswered(struct question[], int*);
 
 void
 mainMenu(char* mode)
@@ -33,15 +32,19 @@ void
 getQuestion(string150 question)
 {
     /*
+    getQuestion() handles string inputs with spaces
+    @param string150 question - address where the string is to be held
+    return void
+    */
+    /*
        questions will contain multiple words; hence, the need for a function
        such as this one that can take string inputs and account for spaces
        and will only end the input once a newline is entered
     */
-   //need to clear string
-    
+
     char ch = '\0';
     int i = 0; 
-    strcpy(question, "");
+    strcpy(question, "");//need to clear string
     do
     { 
         scanf("%c", &ch);
@@ -54,8 +57,16 @@ getQuestion(string150 question)
     }while (ch != '\n' && i < quessSize-1);
 }
 
-void updateNum(struct question list[], int *nQuestions, string20 topic)
+void updateNum(struct question list[], 
+               int *nQuestions, string20 topic)
 {
+    /*
+    updateNum() - updates the question number of a given topic
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    @param string20 topic - string literal containing a certain topic
+    return void
+    */
 
     int num = 0; 
     for (int i = 0; i < *nQuestions; i++)
@@ -70,6 +81,10 @@ void updateNum(struct question list[], int *nQuestions, string20 topic)
 
 void dots()
 {
+    /*
+    dots() - prints out periods with a delay in between
+    return void
+    */
     for (int i = 0; i < 3; i++)
     {
         Sleep(350);
@@ -82,6 +97,13 @@ void dots()
 
 int getPassword(char* mode)
 {
+    /*
+    getPassword() - handles password input and can display asterisks in place 
+                    of the characters entered in stdin
+    @param char * mode - the character literal evaluated to change modes
+    return result - Will only return 2 if password is correct. If result is 1
+                    the loop will stop and program will go back to main menu
+    */
     char password[30] = "password";
     string500 input; 
 
@@ -160,10 +182,19 @@ int getPassword(char* mode)
 
 
 
-void manageData(char * mode, struct question list[], int * nQuestions)
+void manageData(char * mode, 
+                struct question list[], 
+                int * nQuestions)
 {
-    int choice; 
+    /*
+    manageData() - handles mode changing for different admin actions
+    @param char *mode - char variable used to evaluate which mode the user chooses
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    return void
+    */
 
+    int choice; 
     do
     {
         system("cls");
@@ -185,7 +216,6 @@ void manageData(char * mode, struct question list[], int * nQuestions)
                     addRecord(list, nQuestions);
                     break;
                 case 2:
-                    
                     do
                     {
                         system("cls");
@@ -233,6 +263,15 @@ int checkQA(string150 question,
              struct question list[], 
              int * nQuestions)
 {
+    /*
+    checkQA() - checks if a certain question and answer pair is already present
+    @param string150 question - string literal to be searched in records (question)
+    @param string30 answer - string literal to be searched in records (answer)
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    return found - will return result if found or not 
+    */
+
     int i, found = 0; 
     for (i = 0; i < *nQuestions; i++)
         if (!strcmp(question, list[i].question) &&
@@ -244,8 +283,16 @@ int checkQA(string150 question,
 }
 
 void 
-addRecord(struct question list[], int * nQuestions)
+addRecord(struct question list[], 
+          int * nQuestions)
 {
+    /*
+    addRecord() - adds an entire question record to the list
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    return void
+    */
+
     fflush(stdin);
     char buffer = '\0';
     string150 questionInput; 
@@ -330,8 +377,19 @@ addRecord(struct question list[], int * nQuestions)
 }
 
 void
-editRecord(struct question list[], int * nQuestions, int * mode)
+editRecord(struct question list[], 
+           int * nQuestions, 
+           int * mode)
 {
+    /*
+    editData() - asks user for a topic, question number, and which field to 
+                 edit in from the list of questions recorded. 
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    @param int *mode - to change the mode in main menu() and stop the loop
+    return void 
+    */
+
     /*
         In manageData(), editPrompt will continue to run until you change 
         the choice used to switch modes in manageData()
@@ -377,6 +435,7 @@ editRecord(struct question list[], int * nQuestions, int * mode)
         }        
         Sleep(1000);
         printf("\n-----List of topics-----\n");
+
         num = 0;//num unique topics
 
         for (k = 0; k < *nQuestions; k++)
@@ -568,8 +627,19 @@ editRecord(struct question list[], int * nQuestions, int * mode)
 }
 
 void
-deleteRecord(struct question list[], int * nQuestions, int * mode)
+deleteRecord(struct question list[],
+             int * nQuestions, 
+             int * mode)
 {
+    /*
+    deleteRecord() - asks the user which question record to delete from a certain 
+                     topic
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    @param int *mode - to change the mode in main menu() and stop the loop
+    return void 
+    */
+
     int count, num, willDelete; 
     int topicChoice, questionChoice; 
     int uniqueIndexes[*nQuestions];
@@ -776,6 +846,14 @@ void importData(struct question list[],
                 int *nQuestions,
                 int *mode)
 {
+    /*
+    importData() - imports a set of questions from a text file into list[]
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    @param int *mode - to change the mode in main menu() and stop the loop
+    return void 
+    */
+
     FILE *fp;
     string30 filename;
     int option, quesNum, found = 0, sameRecord = 0;
@@ -831,7 +909,7 @@ void importData(struct question list[],
         } while (!(option == 1 || option == 2));
     } else
     {
-        //need spaces to account for whitespaces in text file
+        //need \n to account for newlines in text file
         while (fscanf(fp, "%s\n%d\n%[^\n]\n%s\n%s\n%s\n%s\n\n", topic,
                                                 &quesNum, 
                                                 question, 
@@ -867,8 +945,15 @@ void importData(struct question list[],
 }
 
 void 
-exportData(struct question list[], int * nQuestions)
+exportData(struct question list[],
+           int * nQuestions)
 {
+    /*
+    exportData() - exports the current set of records in list[]
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    return void 
+    */
     FILE *fp;
     string30 filename;
 
@@ -908,6 +993,13 @@ game(struct player profileList[],
      int *nPlayers, 
      char * mode)
 {  
+    /*
+    game() - updates score.txt and handes mode handling for the play menu
+    @param struct player profileList[] - array of structs containing player records
+    @param int *nPlayers - pointer to the number of players in the record
+    @param char *mode - to change the mode in main menu() and handle the loop
+    return void 
+    */
     int i;
     int nQuestions = 0, control = 0, fileLoaded = 0; 
     char playMode; 
@@ -940,7 +1032,6 @@ game(struct player profileList[],
                 fileLoaded = 1; 
                 system("cls");
                 importQuestions(fp2, list, &nQuestions);
-                initializeAnswered(list, &nQuestions);
             }
             Sleep(500);
         }
@@ -998,9 +1089,24 @@ game(struct player profileList[],
 }
 
 void 
-play(struct question list[], struct player profileList[],
-     int *nQuestions, int *nPlayers, char * mode)
+play(struct question list[], 
+    struct player profileList[],
+    int *nQuestions, 
+    int *nPlayers, 
+    char * mode)
 {
+    /*
+    play() - Main function for the quiz game. Will ask for player usernames and a
+             topic to be quizzed on. Turn only ends when player chooses to exit 
+             their quiz
+    @param struct question list[] - array of structs containing question records
+    @param struct player profileList[] - array of structs containing player records
+    @param int *nQuestions - pointer to the number of questions in the record
+    @param int *nPlayers - pointer to the number of players in the record
+    @param char *mode - to change the mode in main menu() and handle the loop
+    return void 
+    */
+
     int num, count, k = 0, pos = 0;
     int end = 0, highest = 1, number = 0, found = 0;
     int foundPlayer, playerIndex; 
@@ -1133,7 +1239,6 @@ play(struct question list[], struct player profileList[],
                 {
                     printf("%s\n", list[k].question);
                     found = 1;
-                    list[k].answered = 1; 
                     k--;
                 }
                 k++;
@@ -1180,8 +1285,17 @@ play(struct question list[], struct player profileList[],
 }
 
 void
-viewScores(struct player profileList[], int *nPlayers)
+viewScores(struct player profileList[], 
+           int *nPlayers)
 {
+    /*
+    viewScores() - A main function for the quiz game. Will display the current 
+                   scoreboard and export it in the form of a text file
+    @param struct player profileList[] - array of structs containing player records
+    @param int *nPlayers - pointer to the number of players in the record
+    return void 
+    */
+
     //assume currentName in printScoreboard is leading scorer -> sorted array
     int score;
     char buffer; 
@@ -1217,8 +1331,18 @@ viewScores(struct player profileList[], int *nPlayers)
 }
 
 int 
-searchPlayer(struct player profileList[], int *nPlayers, string20 name)
+searchPlayer(struct player profileList[], 
+             int *nPlayers, 
+             string20 name)
 {
+    /*
+    searchPlayer() - Searches for the index of a player that matches a name
+    @param struct player profileList[] - array of structs containing player records
+    @param int *nPlayers - pointer to the number of players in the record
+    @param string20 name - name to be looked up
+    return index - returns the index of the player with the same name 
+    */
+
     int i = 0, index = -1; 
 
     while (i < *nPlayers && index == -1)
@@ -1232,8 +1356,18 @@ searchPlayer(struct player profileList[], int *nPlayers, string20 name)
 }
 
 void
-printScoreboard(struct player profileList[], int *nPlayers, string20 currentName)
+printScoreboard(struct player profileList[], 
+                int *nPlayers, 
+                string20 currentName)
 {
+    /*
+    printScoreboard() - prints the current scoreboard
+    @param struct player profileList[] - array of structs containing player records
+    @param int *nPlayers - pointer to the number of players in the record
+    @param string20 currentName - current player name; to give emphasis
+    return void 
+    */
+
     int i; 
 
     printf("*--------------------------------*\n");
@@ -1262,8 +1396,15 @@ printScoreboard(struct player profileList[], int *nPlayers, string20 currentName
 }
 
 void
-sortByScore(struct player profileList[], int *nPlayers)
+sortByScore(struct player profileList[], 
+            int *nPlayers)
 {
+    /*
+    sortByScore() - sorts the profile list according to score (descending order)
+    @param struct player profileList[] - array of structs containing player records
+    @param int *nPlayers - pointer to the number of players in the record
+    return void 
+    */
     int i, j, max;
     struct player temp; 
     for (i = 0; i < *nPlayers-1; i++)
@@ -1285,8 +1426,15 @@ sortByScore(struct player profileList[], int *nPlayers)
 }
 
 void
-initializePlayerList(struct player list[], int *nPlayers)
+initializePlayerList(struct player list[], 
+                     int *nPlayers)
 {
+    /*
+    initializePlayerList() - resets the player list[] (both names and score)
+    @param struct player profileList[] - array of structs containing player records
+    @param int *nPlayers - pointer to the number of players in the record
+    return void 
+    */
     int i; 
     for (i = 0; i < *nPlayers; i++)
     {
@@ -1297,8 +1445,15 @@ initializePlayerList(struct player list[], int *nPlayers)
 }
 
 void
-initializeQuestionList(struct question list[], int *nQuestions)
+initializeQuestionList(struct question list[], 
+                       int *nQuestions)
 {
+     /*
+    initializeQuestionList() - resets all the records and their elements of the questions
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    return void 
+    */
     int i; 
     for (i = 0; i < *nQuestions; i++)
     {
@@ -1309,24 +1464,19 @@ initializeQuestionList(struct question list[], int *nQuestions)
         strcpy(list[i].c2, "");
         strcpy(list[i].c3, "");
         list[i].num = 0; 
-        list[i].answered = 0;
     }
     *nQuestions = 0; 
 }
 
 void
-initializeAnswered(struct question list[], int * nQuestions)
-{
-    int i; 
-    for (i = 0; i < *nQuestions; i++)
-        list[i].answered = 0;
-}
-
-void
 inputFile(string30 filename)
 {
+     /*
+    inputFile() - asks for the input of a filename with input validation
+    @param string30 filename - the address where the string literal will be held
+    return void 
+    */
     char verify = 'n';
-
     do
     {
         if (verify == 'n' || verify == 'N')
@@ -1353,8 +1503,15 @@ inputFile(string30 filename)
 }
 
 void
-importQuestions(FILE *fp, struct question list[], int * nQuestions)
+importQuestions(FILE *fp, struct question list[], 
+                int * nQuestions)
 {
+     /*
+    importQuestions() - called in play() to import a question bank
+    @param struct question list[] - array of structs containing question records
+    @param int *nQuestions - pointer to the number of questions in the record
+    return void 
+    */
     string20 topic; 
     string30 answer, c1, c2, c3;
     string150 question; 
