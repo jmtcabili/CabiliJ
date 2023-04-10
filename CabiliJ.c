@@ -1,3 +1,12 @@
+/*********************************************************************************************************
+This is to certify that this project is my own work, based on my personal efforts in studying and applying the concepts
+learned. I have constructed the functions and their respective algorithms and corresponding code by myself. The
+program was run, tested, and debugged by my own efforts. I further certify that I have not copied in part or whole or
+otherwise plagiarized the work of other students and/or persons.
+Cabili, Johan Marlo T., DLSU ID# 12274348
+*********************************************************************************************************/
+
+
 #include <stdio.h> //standard input-output library
 #include <string.h> //for string functions
 #include <windows.h> //for system commands
@@ -11,15 +20,20 @@
 int
 main()
 {
+
+    /*
+        main() serves as the main menu for the program 
+        @return 0 if the user exits the game
+    */
+
     char mode = 'b'; //start the game mode at the main menu
-    int nQuestions = 0, nPlayers = 0;
+    int nQuestions = 0, nPlayers = 0; //numbers of questions and players
     struct question list[listSize]; //struct array for 50 questions 
     struct player profileList[listSize]; //struct array for 50 players
 
-    FILE *fp; 
-
     srand(time(NULL));
-    do //make main menu a mode, include it in one of the cases
+
+    do
     {
         fflush(stdin);
         switch (mode)
@@ -27,27 +41,22 @@ main()
             case 'b': 
             case 'B':
                 system("cls");
-                mainMenu(&mode);
+                mainMenu(&mode); //prints the main menu prompt
                 break;
             case 'm':
             case 'M':
-                if (getPassword(&mode) == 2)
+                system("cls");
+                //if password is correct, will run manageData()
+                if (getPassword(&mode) == 2) 
                     manageData(&mode, list, &nQuestions);
                 break;
             case 'p':
             case 'P':
-                if(nQuestions)
-                {
-                    game(list, profileList, &nQuestions, &nPlayers, &mode);
-                }
-                else 
-                {
-                    printf("\nThere are no questions yet!");
-                    Sleep(2000);
-                    mode = 'b';
-                }
+                //runs the quiz game
+                game(profileList, &nPlayers, &mode);
                 break;
             default:
+                //in case of invalid input
                 printf("Invalid input. Please Try again.\n");
                 Sleep(1000);
                 mode = 'b';
@@ -70,8 +79,12 @@ main()
             - import (account for same q and a)
                 - do not import if there is similar record
                 - give warning message "some messages not imported"
+            - clear question list
         2. Exit (game)
             - clear player lists, also questions? ask others
+        3. Play 
+            - import question bank
+        4. Test cases
     */
     
     return 0; 
